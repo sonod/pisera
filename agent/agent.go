@@ -3,6 +3,7 @@ package agent
 import (
 	"net"
 	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -22,9 +23,21 @@ func Run(conf config.Config, section string) error {
 			return err
 		}
 
-		h, err := os.Hostname()
+		hostname, err := os.Hostname()
 		if err != nil {
 			panic(err)
+		}
+
+		if _, err := exec.LookPath("ipmitool"); err == nil {
+			cmd := "ipmitool lan print | grep 'Address' | awk 'match($0,/[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+/) {print $4}'"
+			out, err := exec.Command("sh", "-c", cmd).Output()
+			if err != nil {
+				return err
+			}
+			ipmiAddress := string(out)
+			if _, err := model.CreateDevice(conf, token, sectionID, hostname, ipmiAddress); err != nil {
+				return err
+			}
 		}
 
 		sl, err := model.GetSubnetList(conf, token, sectionID)
@@ -71,7 +84,7 @@ func Run(conf config.Config, section string) error {
 
 						a := strings.Split(addr.String(), "/")
 						if _, v := userAddressList[a[0]]; v == false {
-							if _, err := model.CreateIPAddress(conf, token, subnetID, h, a[0], i); err != nil {
+							if _, err := model.CreateIPAddress(conf, token, subnetID, hostname, a[0], i); err != nil {
 								panic(err)
 							}
 						}

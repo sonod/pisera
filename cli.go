@@ -41,6 +41,7 @@ func (cli *CLI) Run(args []string) int {
 	flags.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n  %s [OPTIONS] ARGS...\nArgs\n", os.Args[0], os.Args[0])
 		fmt.Fprint(os.Stderr, "  subnet-list  Subnet List\n")
+		fmt.Fprint(os.Stderr, "  device-list  Used Device List(IPMI Address List)\n")
 		fmt.Fprint(os.Stderr, "  free-address First Address List(require -subnet)\n")
 		fmt.Fprint(os.Stderr, "  address-list Used Address List(require -subnet)\n")
 		fmt.Fprint(os.Stderr, "  usage-subnet Usage Subnet(require -subnet)\nOptions\n")
@@ -121,6 +122,17 @@ func (cli *CLI) Run(args []string) int {
 		}
 		subnetListTable.Render()
 		return ExitCodeOK
+	} else if flags.Arg(0) == "device-list" {
+		dl, err := model.GetDeviceList(conf, token)
+		if err != nil {
+			return ExitCodeError
+		}
+		deviceListTable := tablewriter.NewWriter(os.Stdout)
+		deviceListTable.SetHeader([]string{"Hostname", "IP Address", "Rack"})
+		for _, d := range dl.Data {
+			deviceListTable.Append([]string{d.Hostname, d.Ip, d.Rack})
+		}
+		deviceListTable.Render()
 	} else {
 		if subnet == "" {
 			return ExitCodeError
