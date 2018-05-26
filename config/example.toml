@@ -1,0 +1,5 @@
+[server]
+endpoint = "http://192.168.33.111/phpipam"
+username = "admin"
+password = "zaq12wsx"
+app_id = "app"
