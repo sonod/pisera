@@ -28,6 +28,22 @@ func Run(conf config.Config, section string) error {
 			panic(err)
 		}
 
+		hal, err := model.GetHostAddressList(conf, token, hostname)
+		if err != nil {
+			return err
+		}
+		if hal != nil {
+			for _, ha := range hal.Data {
+				if ha.Hostname == hostname {
+					var haid int
+					haid = ha.ID
+					if _, err := model.DeleteIPAddress(conf, token, haid); err != nil {
+						return err
+					}
+				}
+			}
+		}
+
 		if _, err := exec.LookPath("ipmitool"); err == nil {
 			cmd := "ipmitool lan print | grep 'Address' | awk 'match($0,/[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+/) {print $4}'"
 			out, err := exec.Command("sh", "-c", cmd).Output()
