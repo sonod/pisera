@@ -1,6 +1,9 @@
 package model
 
-import "github.com/sonod/pisera/config"
+import (
+	"github.com/sonod/pisera/config"
+	"github.com/sonod/pisera/lib"
+)
 
 type createDevice struct {
 	Sections    string
@@ -9,7 +12,7 @@ type createDevice struct {
 	Description string
 }
 
-func CreateDevice(conf config.Config, secID, hostName, ipmi string) ([]byte, error) {
+func CreateDevice(conf config.Config, token, secID, hostName, ipmi string) ([]byte, error) {
 	urlPath := conf.Server.AppID + "/devices/"
 	cdBody := &createDevice{
 		Sections:    secID,
@@ -17,7 +20,7 @@ func CreateDevice(conf config.Config, secID, hostName, ipmi string) ([]byte, err
 		Ip_addr:     ipmi,
 		Description: "IPMI",
 	}
-	res, err := client.PHPIPAMRequest(conf, "POST", token, "", urlPath, cdbody)
+	res, err := client.PHPIPAMRequest(conf, "POST", token, "", urlPath, cdBody)
 	if err != nil {
 		return nil, err
 	}

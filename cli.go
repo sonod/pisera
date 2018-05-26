@@ -32,7 +32,7 @@ func (cli *CLI) Run(args []string) int {
 		agentEnable bool
 		configPath  string
 		section     string
-		cidr        string
+		subnet      string
 		hostname    string
 	)
 
@@ -41,16 +41,16 @@ func (cli *CLI) Run(args []string) int {
 	flags.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n  %s [OPTIONS] ARGS...\nArgs\n", os.Args[0], os.Args[0])
 		fmt.Fprint(os.Stderr, "  subnet-list  Subnet List\n")
-		fmt.Fprint(os.Stderr, "  free-address First Address List(require -cidr)\n")
-		fmt.Fprint(os.Stderr, "  address-list Used Address List(require -cidr)\n")
-		fmt.Fprint(os.Stderr, "  usage-subnet Usage Subnet(require -cidr)\nOptions\n")
+		fmt.Fprint(os.Stderr, "  free-address First Address List(require -subnet)\n")
+		fmt.Fprint(os.Stderr, "  address-list Used Address List(require -subnet)\n")
+		fmt.Fprint(os.Stderr, "  usage-subnet Usage Subnet(require -subnet)\nOptions\n")
 		flags.PrintDefaults()
 	}
 	flags.SetOutput(cli.errStream)
 
 	flags.BoolVar(&agentEnable, "agent", false, "Pisera_Agent_Mode")
 	flags.StringVar(&section, "section", "Customers", "PHPIPAM_Section")
-	flags.StringVar(&cidr, "cidr", "", "your cidr(ex: 172.16.0.0/24)")
+	flags.StringVar(&subnet, "subnet", "", "your subnet(ex: 172.16.0.0/24)")
 	flags.StringVar(&configPath, "config", "/etc/pisera.toml", "Pisera_Config")
 	flags.StringVar(&hostname, "hostname", "", "Server Address List")
 
@@ -122,10 +122,10 @@ func (cli *CLI) Run(args []string) int {
 		subnetListTable.Render()
 		return ExitCodeOK
 	} else {
-		if cidr == "" {
+		if subnet == "" {
 			return ExitCodeError
 		}
-		subnetID, err := model.GetSubnetID(conf, token, sectionID, cidr)
+		subnetID, err := model.GetSubnetID(conf, token, sectionID, subnet)
 		if err != nil {
 			return ExitCodeError
 		}
