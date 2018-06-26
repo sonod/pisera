@@ -12,6 +12,7 @@ type Device struct {
 }
 
 type deviceData struct {
+	Id       string
 	Hostname string
 	Ip       string
 	Rack     string
@@ -48,6 +49,31 @@ func CreateDevice(conf config.Config, token, secID, hostName, ipmi string) ([]by
 		Description: "IPMI",
 	}
 	res, err := client.PHPIPAMRequest(conf, "POST", token, "", urlPath, cdBody)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func SearchDevices(conf config.Config, token, hostname string) (*Device, error) {
+	urlPath := conf.Server.AppID + "/devices/search/" + hostname + "/"
+	d, err := client.PHPIPAMRequest(conf, "GET", token, "", urlPath, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	device := new(Device)
+	if err := json.Unmarshal(d, device); err != nil {
+		return nil, err
+	}
+
+	return device, nil
+}
+
+func DeleteDevice(conf config.Config, token, id string) ([]byte, error) {
+	urlPath := conf.Server.AppID + "/devices/"
+	ddBody := map[string]interface{}{"id": id}
+	res, err := client.PHPIPAMRequest(conf, "DELETE", token, "", urlPath, ddBody)
 	if err != nil {
 		return nil, err
 	}

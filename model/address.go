@@ -106,7 +106,7 @@ func CreateIPAddress(conf config.Config, token, subnetID, hostName, address stri
 	return res, nil
 }
 
-func DeleteIPAddress(conf config.Config, token string, id int) ([]byte, error) {
+func DeleteIPAddress(conf config.Config, token, id string) ([]byte, error) {
 	urlPath := conf.Server.AppID + "/addresses/" + id + "/"
 	hal, err := client.PHPIPAMRequest(conf, "DELETE", token, "", urlPath, nil)
 	if err != nil {

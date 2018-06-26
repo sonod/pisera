@@ -35,9 +35,7 @@ func Run(conf config.Config, section string) error {
 		if hal != nil {
 			for _, ha := range hal.Data {
 				if ha.Hostname == hostname {
-					var haid int
-					haid = ha.ID
-					if _, err := model.DeleteIPAddress(conf, token, haid); err != nil {
+					if _, err := model.DeleteIPAddress(conf, token, ha.ID); err != nil {
 						return err
 					}
 				}
@@ -49,6 +47,19 @@ func Run(conf config.Config, section string) error {
 			out, err := exec.Command("sh", "-c", cmd).Output()
 			if err != nil {
 				return err
+			}
+			sd, err := model.SearchDevices(conf, token, hostname)
+			if err != nil {
+				return err
+			}
+			if sd != nil {
+				for _, d := range sd.Data {
+					if d.Hostname == hostname {
+						if _, err := model.DeleteDevice(conf, token, d.Id); err != nil {
+							return err
+						}
+					}
+				}
 			}
 			ipmiAddress := string(out)
 			if _, err := model.CreateDevice(conf, token, sectionID, hostname, ipmiAddress); err != nil {
