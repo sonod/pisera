@@ -1,37 +1,51 @@
 # pisera(phpIPAM Server Assistant)
 
 ## Description
-pisera is the CLI tool and the Agent tool of phpIPAM.
-In the CLI, you can work with phpIPAM to return a list of addresses or return unused addresses.
-Agent automatically registers the host's address in phpIPAM.
+pisera is the CLI tool and the Agent tool of phpIPAM.  
+In the CLI, you can work with phpIPAM to return a list of addresses or return unused addresses.  
+Agent automatically registers the host's address in phpIPAM.  
 Also, if the server has IPMI, it registers the device based on the IPMI address.
 
 ## Usage
-setting phpIPAM endpoint and username and password and app_id to `pisera.toml`.
+setting phpIPAM endpoint and username and password and app_id to `pisera.toml`.  
 default path is `/etc/pisera.toml`.
 
 ### Client Mode
-check subnet-list
-`$ pisera subnet-list`
+#### check subnet-list  
+```
+$ pisera subnet-list
+```
 
-check device-list
-`$ pisera device-list`
+#### check device-list  
+```
+$ pisera device-list
+```
 
-check free-address for subnet
-`$ pisera -subnet 172.17.1.0/24 free-address`
+#### check free-address for subnet
+```
+$ pisera -subnet 172.17.1.0/24 free-address
+```
 
-check address-list for subnet
-`$ pisera -subnet 172.17.1.0/24 address-list`
+#### check address-list for subnet
+```
+$ pisera -subnet 172.17.1.0/24 address-list
+```
 
-check usage-subnet
-`$ pisera -subnet 172.17.1.0/24 usage-subnet`
+#### check usage-subnet
+```
+$ pisera -subnet 172.17.1.0/24 usage-subnet
+```
 
-check address for hostname
-`$ pisera -hostname nrm`
+#### check address for hostname
+```
+$ pisera -hostname nrm-db
+```
 
 ### Agent Mode
-launch pisera agent
-`$ pisera -agent`
+#### launch pisera agent
+```
+$ pisera -agent
+```
 
 ## Install
 
