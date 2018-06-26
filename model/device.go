@@ -55,6 +55,19 @@ func CreateDevice(conf config.Config, token, secID, hostName, ipmi string) ([]by
 	return res, nil
 }
 
+func UpdateDevice(conf config.Config, token, DevID, ipmi string) ([]byte, error) {
+	urlPath := conf.Server.AppID + "/devices/"
+	udBody := &deviceData{
+		Id: DevID,
+		Ip: ipmi,
+	}
+	res, err := client.PHPIPAMRequest(conf, "PATCH", token, "", urlPath, udBody)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func SearchDevices(conf config.Config, token, hostname string) (*Device, error) {
 	urlPath := conf.Server.AppID + "/devices/search/" + hostname + "/"
 	d, err := client.PHPIPAMRequest(conf, "GET", token, "", urlPath, nil)

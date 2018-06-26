@@ -48,6 +48,7 @@ func Run(conf config.Config, section string) error {
 			if err != nil {
 				return err
 			}
+			ipmiAddress := string(out)
 			sd, err := model.SearchDevices(conf, token, hostname)
 			if err != nil {
 				return err
@@ -55,15 +56,15 @@ func Run(conf config.Config, section string) error {
 			if sd != nil {
 				for _, d := range sd.Data {
 					if d.Hostname == hostname {
-						if _, err := model.DeleteDevice(conf, token, d.Id); err != nil {
+						if _, err := model.UpdateDevice(conf, token, d.Id, ipmiAddress); err != nil {
 							return err
 						}
 					}
 				}
-			}
-			ipmiAddress := string(out)
-			if _, err := model.CreateDevice(conf, token, sectionID, hostname, ipmiAddress); err != nil {
-				return err
+			} else {
+				if _, err := model.CreateDevice(conf, token, sectionID, hostname, ipmiAddress); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -119,7 +120,7 @@ func Run(conf config.Config, section string) error {
 				}
 			}
 		}
-		time.Sleep(time.Duration(1) * time.Hour)
+		time.Sleep(time.Duration(12) * time.Hour)
 	}
 	return nil
 }
